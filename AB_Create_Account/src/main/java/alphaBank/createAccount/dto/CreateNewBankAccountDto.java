@@ -19,5 +19,6 @@ public class CreateNewBankAccountDto {
 	String employmentStatus;
 	AddressDto address;
 	ContactDetailsDto contactDetails;
+	int balance;
 	
 }

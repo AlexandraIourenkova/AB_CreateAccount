@@ -22,6 +22,8 @@ public class AccountEntity {
 		String employmentStatus;
 		Address address;
 		ContactDetails contactDetails;
+		int balance;
+		String passwordEncoded;
 		
 	}
 

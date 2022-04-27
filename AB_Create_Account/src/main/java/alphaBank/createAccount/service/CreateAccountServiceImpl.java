@@ -3,9 +3,11 @@ package alphaBank.createAccount.service;
 import java.lang.reflect.Field;
 import java.util.Optional;
 
+import org.mindrot.jbcrypt.BCrypt;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import alphaBank.createAccount.dao.AccountMongoRepository;
 import alphaBank.createAccount.dto.CreateNewBankAccountDto;
@@ -35,16 +37,24 @@ public class CreateAccountServiceImpl implements ICreateAccountService {
 			throw new AccAlreadyExistsException(createNewBankAccountDto.getId());
 		}
 		if (!BuildAccountSimulation.dummyFunction()) {
-			throw new AccCanNotBeBuiltException(createNewBankAccountDto.getId());// checks if 
+			throw new AccCanNotBeBuiltException(createNewBankAccountDto.getId());// checks if
 		}
-		AccountEntity newAccountEntity = repository.save(modelMapper.map(createNewBankAccountDto, AccountEntity.class));
-		
+		AccountEntity newAccountEntity = modelMapper.map(createNewBankAccountDto, AccountEntity.class);
+		String password = BCrypt.hashpw(passwordGenerated(), BCrypt.gensalt());
+		newAccountEntity.setPasswordEncoded(password);
+		//sendPasswordToUser();
+		repository.save(newAccountEntity);
 		return modelMapper.map(newAccountEntity, ResponseCreateNewBankAccountDto.class);
 	}
 
-	private void completenessCheck(CreateNewBankAccountDto createNewBankAccountDto) {
+	private String passwordGenerated() {
+		return "12345";
+	}
+
+	public void completenessCheck(CreateNewBankAccountDto createNewBankAccountDto) {
 		for (Field f : createNewBankAccountDto.getClass().getDeclaredFields()) {
 			try {
+				f.setAccessible(true);
 				if (f.get(createNewBankAccountDto) == null) {
 					throw new EmptyFieldException(f.getName());
 				}

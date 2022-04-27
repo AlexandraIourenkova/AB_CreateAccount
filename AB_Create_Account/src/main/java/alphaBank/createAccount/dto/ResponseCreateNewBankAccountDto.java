@@ -19,5 +19,6 @@ public class ResponseCreateNewBankAccountDto {
 	String employmentStatus;
 	AddressDto address;
 	ContactDetailsDto contactDetails;
+	int balance;
 
 }
