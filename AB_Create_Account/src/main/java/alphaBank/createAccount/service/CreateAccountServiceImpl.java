@@ -40,8 +40,8 @@ public class CreateAccountServiceImpl implements ICreateAccountService {
 			throw new AccCanNotBeBuiltException(createNewBankAccountDto.getId());// checks if
 		}
 		AccountEntity newAccountEntity = modelMapper.map(createNewBankAccountDto, AccountEntity.class);
-		String password = BCrypt.hashpw(passwordGenerated(), BCrypt.gensalt());
-		newAccountEntity.setPasswordEncoded(password);
+//		String password = BCrypt.hashpw(passwordGenerated(), BCrypt.gensalt());
+		newAccountEntity.setPasswordEncoded(passwordGenerated());
 		//sendPasswordToUser();
 		repository.save(newAccountEntity);
 		return modelMapper.map(newAccountEntity, ResponseCreateNewBankAccountDto.class);
@@ -55,7 +55,7 @@ public class CreateAccountServiceImpl implements ICreateAccountService {
 		for (Field f : createNewBankAccountDto.getClass().getDeclaredFields()) {
 			try {
 				f.setAccessible(true);
-				if (f.get(createNewBankAccountDto) == null) {
+				if (f.get(createNewBankAccountDto) == null || f.get(createNewBankAccountDto) == "") {
 					throw new EmptyFieldException(f.getName());
 				}
 			} catch (IllegalArgumentException e) {
